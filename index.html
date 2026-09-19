@@ -316,7 +316,6 @@ main{display:block}
       <h2 class="display sm">Selected work</h2>
     </div>
     <div class="filters" role="group" aria-label="Portfolio filters">
-      <button class="filter" type="button" data-filter="all">All</button>
       <button class="filter" type="button" data-filter="billboards">Billboards</button>
       <button class="filter" type="button" data-filter="logos">Logos</button>
       <button class="filter" type="button" data-filter="menu-printing">Menu &amp; Printings</button>
@@ -488,7 +487,7 @@ main{display:block}
       b.addEventListener('click', function () { setFilter(b.dataset.filter); });
     });
 
-    setFilter('all');
+    setFilter('billboards');
   }
 
   function setupScrollTransitionSystem() {
