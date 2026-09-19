@@ -139,6 +139,8 @@ main{display:block}
 .display em{font-style:normal;color:var(--burgundy);display:block}
 .display-line{display:block;overflow:hidden}
 .display-line > span{display:block;transform:translateY(110%);opacity:0}
+.js-scroll-sections .sec > *{opacity:0;transform:translateY(34px);will-change:transform,opacity}
+.js-scroll-sections .sec .display-line > span{will-change:transform,opacity}
 .hero-curtain{position:absolute;right:-8%;bottom:-2%;width:108%;height:76%;background:linear-gradient(180deg,#5e1219 0%,#4d0912 38%,#3a0d12 100%);border-radius:40% 50% 0 0 / 36% 18% 0 0;clip-path:ellipse(86% 100% at 52% 100%);z-index:8;pointer-events:none;box-shadow:0 -10px 26px rgba(38,9,12,.12)}
 .work .item img{clip-path:inset(0 0 100% 0);opacity:0.7;transform:scale(1.05)}
 
@@ -501,6 +503,25 @@ main{display:block}
     }
 
     gsap.registerPlugin(ScrollTrigger);
+    document.documentElement.classList.add('js-scroll-sections');
+
+    gsap.utils.toArray('.sec').forEach(function (section) {
+      var content = section.querySelectorAll(':scope > *');
+      gsap.to(content, {
+        y: 0,
+        opacity: 1,
+        stagger: 0.1,
+        duration: 0.9,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 82%',
+          end: 'top 48%',
+          scrub: 1.05,
+          invalidateOnRefresh: true
+        }
+      });
+    });
 
     var hero = document.querySelector('.hero');
     var pageHeroName = gsap.utils.toArray('.name span');
