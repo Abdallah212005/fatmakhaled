@@ -172,7 +172,7 @@ main{display:block}
 
 /* work */
 .work-head{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;margin-bottom:clamp(36px,4vw,64px)}
-.filters{display:flex;flex-wrap:wrap;gap:12px clamp(20px,2.4vw,36px);max-width:560px}
+.filters{display:flex;flex-wrap:nowrap;gap:12px clamp(14px,2vw,32px);max-width:none;white-space:nowrap}
 .filter{background:none;border:0;border-bottom:1px solid transparent;padding:0 0 7px;font-family:var(--sans);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gray);cursor:pointer;transition:color .4s,border-color .4s}
 .filter:hover,.filter.active{color:var(--burgundy);border-color:var(--burgundy)}
 .grid{columns:3 300px;column-gap:clamp(20px,2.4vw,40px)}
@@ -188,6 +188,7 @@ main{display:block}
 .media-frame video.failed + .media-fallback{display:none}
 .item .img-wrap,.item{overflow:visible}
 .item.wide img,.item.wide video{aspect-ratio:4/3}.item.sq img,.item.sq video{aspect-ratio:1}.item.tall img,.item.tall video{aspect-ratio:3/4.2}
+.item > img{height:auto;aspect-ratio:auto;object-fit:contain}
 .item:hover img{transform:scale(1.025)}
 .cap{display:grid;grid-template-columns:1fr auto;gap:6px 16px;align-items:baseline;padding-top:16px;border-top:1px solid rgba(94,18,25,.22);margin-top:-1px}
 .cap h3{font-family:var(--heading);font-weight:400;font-size:clamp(24px,2.1vw,32px);letter-spacing:-.02em}
@@ -211,7 +212,7 @@ main{display:block}
 }
 @media (max-width:640px){
   .about-photo{max-width:320px;margin:0 auto}
-  .work-head{display:block}.filters{margin-top:28px}
+  .work-head{display:block}.filters{margin-top:28px;flex-wrap:wrap;white-space:normal}
   .grid{columns:1}
   .cap{grid-template-columns:minmax(0,1fr);gap:8px}
   .cap span{justify-self:start}
@@ -336,7 +337,6 @@ main{display:block}
   <div class="ctas contact-ctas">
     <a class="social-icon-link" href="https://wa.me/201029097196" target="_blank" rel="noreferrer" aria-label="WhatsApp" title="WhatsApp"><img src="https://img.icons8.com/ios-filled/100/5e1219/whatsapp.png" alt=""></a>
     <a class="social-icon-link" href="https://www.instagram.com/elkomy_design3177/?hl=en" target="_blank" rel="noreferrer" aria-label="Instagram" title="Instagram"><img src="https://img.icons8.com/ios-filled/100/5e1219/instagram-new.png" alt=""></a>
-    <a class="social-icon-link" href="https://www.facebook.com/yourpage" target="_blank" rel="noreferrer" aria-label="Facebook" title="Facebook"><img src="https://img.icons8.com/ios-filled/100/5e1219/facebook-new.png" alt=""></a>
   </div>
   <p class="foot">© Fatma Khaled — Graphic Designer</p>
 </section>
