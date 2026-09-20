@@ -176,11 +176,12 @@ main{display:block}
 .filter{background:none;border:0;border-bottom:1px solid transparent;padding:0 0 7px;font-family:var(--sans);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gray);cursor:pointer;transition:color .4s,border-color .4s}
 .filter:hover,.filter.active{color:var(--burgundy);border-color:var(--burgundy)}
 .grid{columns:3 300px;column-gap:clamp(20px,2.4vw,40px)}
-.item{display:block;break-inside:avoid;margin-bottom:clamp(36px,4vw,64px);perspective:1200px}
+.item{display:block;break-inside:avoid;margin-bottom:clamp(36px,4vw,64px);perspective:1200px;cursor:pointer}
+.item:focus-visible{outline:1px solid var(--burgundy);outline-offset:6px}
 .item.is-hidden{display:none}
 .item img,.item video{width:100%;object-fit:cover;transition:transform 1s cubic-bezier(.2,.7,.2,1),filter .8s ease;filter:saturate(.88)}
 .media-frame{position:relative;width:100%;overflow:hidden;background:linear-gradient(135deg,#4d0f18,#9a6661)}
-.media-frame.wide{aspect-ratio:4/3}.media-frame.sq{aspect-ratio:1}.media-frame.tall{aspect-ratio:3/4.2}
+.media-frame.wide{aspect-ratio:4/3}.media-frame.sq{aspect-ratio:1}.media-frame.tall{aspect-ratio:3/4.2}.media-frame.reel{aspect-ratio:9/16}
 .media-frame > .motion-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.88);clip-path:none;opacity:1;transform:none}
 .media-frame video{position:relative;display:block;height:100%}
 .media-fallback{display:none;position:absolute;inset:0;place-items:center;padding:20px;color:#f3e9e1;font-family:var(--heading);font-size:clamp(28px,4vw,54px);text-align:center}
@@ -188,7 +189,7 @@ main{display:block}
 .media-frame video.failed + .media-fallback{display:none}
 .item .img-wrap,.item{overflow:visible}
 .img-wrap{position:relative;overflow:hidden;display:block}
-.item.wide img,.item.wide video{aspect-ratio:4/3}.item.sq img,.item.sq video{aspect-ratio:1}.item.tall img,.item.tall video{aspect-ratio:3/4.2}
+.item.wide img,.item.wide video{aspect-ratio:4/3}.item.sq img,.item.sq video{aspect-ratio:1}.item.tall img,.item.tall video{aspect-ratio:3/4.2}.item.reel img,.item.reel video{aspect-ratio:9/16}
 .item > .img-wrap > img{height:auto;aspect-ratio:auto;object-fit:contain}
 
 /* ---- hover reveal ---- */
@@ -235,6 +236,34 @@ main{display:block}
   .grid{columns:1}
   .cap{grid-template-columns:minmax(0,1fr);gap:8px}
   .cap span{justify-self:start}
+}
+
+/* ================= PROJECT LIGHTBOX ================= */
+.lightbox{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:clamp(20px,5vw,64px);visibility:hidden;pointer-events:none}
+.lightbox-backdrop{position:absolute;inset:0;background:rgba(20,10,11,.82);backdrop-filter:blur(6px) saturate(1.1);-webkit-backdrop-filter:blur(6px) saturate(1.1);opacity:0}
+.lightbox-panel{position:relative;z-index:1;width:min(1100px,100%);max-height:88vh;background:var(--ivory);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 40px 90px -20px rgba(10,4,5,.6);opacity:0;transform:scale(.86) translateY(18px)}
+.lightbox-media{position:relative;width:100%;background:#161011;display:flex;align-items:center;justify-content:center;max-height:70vh;overflow:hidden}
+.lightbox-media img,.lightbox-media video{width:100%;height:100%;max-height:70vh;object-fit:contain;display:block}
+.lightbox-info{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:clamp(18px,2.4vw,30px) clamp(20px,2.8vw,34px);border-top:1px solid rgba(94,18,25,.18)}
+.lightbox-info h3{font-family:var(--heading);font-weight:400;font-size:clamp(22px,2.4vw,32px);letter-spacing:-.02em;color:var(--ink)}
+.lightbox-info span{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gray)}
+.lightbox-related{padding:0 clamp(20px,2.8vw,34px) clamp(20px,2.8vw,34px);overflow:auto}
+.lightbox-related h4{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gray);font-weight:400;margin-bottom:14px}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:10px}
+.related-item{position:relative;aspect-ratio:1;border:0;padding:0;background:#241516;overflow:hidden;cursor:pointer;opacity:.68;transition:opacity .3s,transform .3s,outline-color .3s;outline:1px solid transparent}
+.related-item:hover,.related-item.is-active{opacity:1;transform:translateY(-2px);outline-color:var(--burgundy)}
+.related-item img,.related-item video{width:100%;height:100%;display:block;object-fit:cover}
+.related-item .related-index{position:absolute;right:7px;top:5px;color:#fff;font-size:10px;letter-spacing:.08em;text-shadow:0 1px 4px #000}
+.lightbox-close{position:absolute;top:clamp(14px,1.8vw,22px);right:clamp(14px,1.8vw,22px);z-index:2;width:40px;height:40px;border-radius:50%;border:1px solid rgba(243,235,225,.4);background:rgba(20,10,11,.35);color:#f3ebe1;font-size:18px;line-height:1;display:grid;place-items:center;cursor:pointer;transition:background .35s,transform .35s,border-color .35s}
+.lightbox-close:hover{background:var(--burgundy);border-color:var(--burgundy);transform:rotate(90deg)}
+.lightbox.is-open{visibility:visible;pointer-events:auto}
+@media (max-width:640px){
+  .lightbox{padding:16px}
+  .lightbox-panel{max-height:92vh}
+  .lightbox-info{flex-direction:column;align-items:flex-start;gap:6px}
+}
+@media (prefers-reduced-motion:reduce){
+  .lightbox-backdrop,.lightbox-panel{transition:none!important}
 }
 </style>
 </head>
@@ -362,6 +391,22 @@ main{display:block}
 </section>
 </main>
 
+<div class="lightbox" id="projectLightbox" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="lightbox-backdrop" id="lightboxBackdrop"></div>
+  <div class="lightbox-panel" id="lightboxPanel">
+    <button class="lightbox-close" type="button" id="lightboxClose" aria-label="Close">&times;</button>
+    <div class="lightbox-media" id="lightboxMedia"></div>
+    <div class="lightbox-info">
+      <h3 id="lightboxTitle"></h3>
+      <span id="lightboxCategory"></span>
+    </div>
+    <div class="lightbox-related">
+      <h4 id="lightboxRelatedTitle">More from this project</h4>
+      <div class="related-grid" id="lightboxRelated"></div>
+    </div>
+  </div>
+</div>
+
 <script>
 (function () {
   var btn = document.querySelector('.menu-btn');
@@ -460,32 +505,214 @@ main{display:block}
     setTool('photoshop');
   }
 
+  var portfolioGroups = [
+    { key: 'akarat-expo', label: 'Akarat Expo', assets: [
+      { category: 'billboards', folder: 'billboards/Akarat Expo', file: '7.png' },
+      { category: 'billboards', folder: 'billboards/Akarat Expo', file: '8.png' }
+    ]},
+    { key: 'ihop', label: 'Ihop', assets: [
+      { category: 'billboards', folder: 'billboards/Ihop', file: '5.png' },
+      { category: 'billboards', folder: 'billboards/Ihop', file: '6.png' }
+    ]},
+    { key: 'oxera', label: 'Oxera', assets: [
+      { category: 'billboards', folder: 'billboards/Oxera', file: '1.png' },
+      { category: 'billboards', folder: 'billboards/Oxera', file: '3.png' },
+      { category: 'billboards', folder: 'billboards/Oxera', file: '4.png' }
+    ]},
+    { key: 'paradise', label: 'Paradise', assets: [
+      { category: 'billboards', folder: 'billboards/Paradise', file: '9.png' },
+      { category: 'billboards', folder: 'billboards/Paradise', file: 'billboards.jpg' }
+    ]},
+    { key: 'eskimo', label: 'Eskimo', assets: [
+      { category: 'logos', folder: 'logo/Eskimo', file: 'Firefly .png' },
+      { category: 'logos', folder: 'logo/Eskimo', file: 'werth.jpg' }
+    ]},
+    { key: 'fambites', label: 'FamBites', assets: [
+      { category: 'logos', folder: 'logo/FamBites', file: '11667551.jpg' },
+      { category: 'logos', folder: 'logo/FamBites', file: '65.png' },
+      { category: 'logos', folder: 'logo/FamBites', file: '85.jpg' },
+      { category: 'logos', folder: 'logo/FamBites', file: '8765.jpg' },
+      { category: 'logos', folder: 'logo/FamBites', file: 'billboard.png' },
+      { category: 'logos', folder: 'logo/FamBites', file: 'Flag_Mockup_2.jpg' },
+      { category: 'logos', folder: 'logo/FamBites', file: 'food truck.jpg' },
+      { category: 'logos', folder: 'logo/FamBites', file: 'Free Apron Mockup.png' },
+      { category: 'logos', folder: 'logo/FamBites', file: 'logo .png' },
+      { category: 'logos', folder: 'logo/FamBites', file: 'logo fambites.jpg' },
+      { category: 'logos', folder: 'logo/FamBites', file: 'wheel.jpg' },
+      { category: 'logos', folder: 'logo/FamBites', file: 'white-paper-embossed-logo-mockup-2.jpg' },
+      { category: 'menu-printing', folder: 'menu/fambites', file: '566.png' },
+      { category: 'menu-printing', folder: 'menu/fambites', file: 'Map_Folded_Flyer_Mockup_4.png' },
+      { category: 'menu-printing', folder: 'menu/fambites', file: 'Map_Folded_Flyer_Mockuسp_4.png' },
+      { category: 'menu-printing', folder: 'menu/fambites', file: 'menu.jpg' }
+    ]},
+    { key: 'monys-kitchen', label: "Mony's kitchen", assets: [
+      { category: 'logos', folder: "logo/Mony's kitchen", file: '01 Logo Mockup - by PuneDesign.jpg' }
+    ]},
+    { key: 'sales-growth-mena', label: 'Sales Growth Mena', assets: [
+      { category: 'logos', folder: 'logo/sales growth mena', file: 'Free_Logo_Mockup_3.jpg' }
+    ]},
+    { key: 'motion-graphic', label: 'Motion Graphic', assets: [
+      { category: 'motion-graphic', folder: 'motion', file: '1.mp4' },
+      { category: 'motion-graphic', folder: 'motion', file: '2.mp4' },
+      { category: 'motion-graphic', folder: 'motion', file: '3.mp4' },
+      { category: 'motion-graphic', folder: 'motion', file: '4.mp4' },
+      { category: 'motion-graphic', folder: 'motion', file: 'web-1.mp4' },
+      { category: 'motion-graphic', folder: 'motion', file: 'web-2.mp4' },
+      { category: 'motion-graphic', folder: 'motion', file: 'web-3.mp4' },
+      { category: 'motion-graphic', folder: 'motion', file: 'web-4.mp4' }
+    ]},
+    { key: 'social-media', label: 'Social Media', assets: [
+      { category: 'social-media', folder: 'social media', file: '1.jpg' },
+      { category: 'social-media', folder: 'social media', file: '2.jpg' },
+      { category: 'social-media', folder: 'social media', file: '3.jpg' },
+      { category: 'social-media', folder: 'social media', file: '4.jpg' },
+      { category: 'social-media', folder: 'social media', file: '5.png' },
+      { category: 'social-media', folder: 'social media', file: '6.jpg' },
+      { category: 'social-media', folder: 'social media', file: '7.jpg' },
+      { category: 'social-media', folder: 'social media', file: '8.png' }
+    ]}
+  ];
+
   function renderPortfolio() {
-    var projects = [
-      { category: 'billboards', label: 'Billboards', files: ['1.png', '2.png', '3.png', '4.jpg'] },
-      { category: 'logos', label: 'Logos', files: ['1.jpg', '2.jpg', '3.jpg', '4.png'], folder: 'logo' },
-      { category: 'menu-printing', label: 'Menu & Print', files: ['1.png', '2.png', '3.png'], folder: 'menu' },
-      { category: 'motion-graphic', label: 'Motion Graphic', files: ['web-1.mp4', 'web-2.mp4', 'web-3.mp4', 'web-4.mp4'], folder: 'motion' },
-      { category: 'social-media', label: 'Social Media', files: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.png', '6.jpg', '7.jpg', '8.png'], folder: 'social%20media' }
-    ];
     var grid = document.getElementById('portfolioGrid');
     var markup = [];
-    projects.forEach(function (group) {
-      group.files.forEach(function (file, index) {
-        var folder = group.folder || group.category;
-        var path = 'portfolio/' + folder + '/' + file;
+    portfolioGroups.forEach(function (group) {
+      group.assets.forEach(function (asset, index) {
+        var path = 'portfolio/' + asset.folder + '/' + asset.file;
+        var encodedPath = encodeURI(path);
+        var file = asset.file;
         var isVideo = file.slice(-4) === '.mp4';
-        var shape = isVideo ? 'wide' : (index % 3 === 0 ? 'tall' : index % 3 === 1 ? 'sq' : 'wide');
-        var poster = isVideo ? path.replace('.mp4', '.jpg') : '';
+        var shape = isVideo ? (asset.category === 'motion-graphic' ? 'reel' : 'wide') : (index % 3 === 0 ? 'tall' : index % 3 === 1 ? 'sq' : 'wide');
+        var poster = isVideo && file.indexOf('web-') === 0 ? encodedPath.replace('.mp4', '.jpg') : '';
         var num = String(index + 1).padStart(2, '0');
-        var overlay = '<div class="item-overlay"><span class="index">' + num + '</span><span class="view">View project<i class="arrow" aria-hidden="true"></i></span></div>';
+        var title = group.label + ' ' + (index + 1);
+        var frameData = 'data-path="' + encodedPath + '" data-type="' + (isVideo ? 'video' : 'image') + '" data-title="' + title + '" data-category="' + group.label + '" data-group="' + group.key + '"';
+        var overlay = '<div class="item-overlay"><span class="index">' + num + '</span><span class="view" tabindex="0" role="button">View project<i class="arrow" aria-hidden="true"></i></span></div>';
         var media = isVideo
-          ? '<div class="item-frame"><div class="media-frame ' + shape + '"><img class="motion-poster" src="' + poster + '" alt="' + group.label + ' project ' + (index + 1) + ' preview"><video src="' + path + '" muted loop autoplay playsinline preload="metadata" aria-label="' + group.label + ' project ' + (index + 1) + '" onerror="this.classList.add(\'failed\')"></video><span class="media-fallback">' + group.label + ' ' + (index + 1) + '</span>' + overlay + '</div></div>'
-          : '<div class="item-frame"><div class="img-wrap"><img src="' + path + '" alt="' + group.label + ' project ' + (index + 1) + '" loading="lazy">' + overlay + '</div></div>';
-        markup.push('<article class="item ' + shape + '" data-category="' + group.category + '">' + media + '<div class="cap"><h3>' + group.label + ' ' + (index + 1) + '</h3><span>' + group.label + '</span><a href="#contact">View project <i class="arrow" aria-hidden="true"></i></a></div></article>');
+          ? '<div class="item-frame" ' + frameData + '><div class="media-frame ' + shape + '">' + (poster ? '<img class="motion-poster" src="' + poster + '" alt="' + title + ' preview">' : '') + '<video src="' + encodedPath + '" muted loop autoplay playsinline preload="metadata" aria-label="' + title + '" onerror="this.classList.add(\'failed\')"></video><span class="media-fallback">' + title + '</span>' + overlay + '</div></div>'
+          : '<div class="item-frame" ' + frameData + '><div class="img-wrap"><img src="' + encodedPath + '" alt="' + title + '" loading="lazy">' + overlay + '</div></div>';
+        markup.push('<article class="item ' + shape + '" data-category="' + asset.category + '" tabindex="0" role="button" aria-label="Open ' + title + '">' + media + '<div class="cap"><h3>' + title + '</h3><span>' + group.label + '</span><a href="#" class="view-project-link">View project <i class="arrow" aria-hidden="true"></i></a></div></article>');
       });
     });
     grid.innerHTML = markup.join('');
+  }
+
+  function setupLightbox() {
+    var lightbox = document.getElementById('projectLightbox');
+    var backdrop = document.getElementById('lightboxBackdrop');
+    var panel = document.getElementById('lightboxPanel');
+    var mediaWrap = document.getElementById('lightboxMedia');
+    var titleEl = document.getElementById('lightboxTitle');
+    var catEl = document.getElementById('lightboxCategory');
+    var relatedGrid = document.getElementById('lightboxRelated');
+    var closeBtn = document.getElementById('lightboxClose');
+    var grid = document.getElementById('portfolioGrid');
+    if (!lightbox || !grid) return;
+
+    var isOpen = false;
+
+    function renderRelated(groupKey, activePath) {
+      var group = portfolioGroups.find(function (entry) { return entry.key === groupKey; });
+      if (!group || !relatedGrid) return;
+      relatedGrid.innerHTML = group.assets.map(function (asset, index) {
+        var path = encodeURI('portfolio/' + asset.folder + '/' + asset.file);
+        var isVideo = asset.file.slice(-4) === '.mp4';
+        var poster = isVideo && asset.file.indexOf('web-') === 0 ? path.replace('.mp4', '.jpg') : '';
+        var preview = poster
+          ? '<img src="' + poster + '" alt="' + group.label + ' ' + (index + 1) + '">'
+          : isVideo
+            ? '<video src="' + path + '" muted playsinline preload="metadata"></video>'
+            : '<img src="' + path + '" alt="' + group.label + ' ' + (index + 1) + '">';
+        return '<button class="related-item' + (path === activePath ? ' is-active' : '') + '" type="button" data-path="' + path + '" data-type="' + (isVideo ? 'video' : 'image') + '" data-title="' + group.label + ' ' + (index + 1) + '" data-category="' + group.label + '" aria-label="Open ' + group.label + ' ' + (index + 1) + '">' + preview + '<span class="related-index">' + String(index + 1).padStart(2, '0') + '</span></button>';
+      }).join('');
+    }
+
+    function setMainMedia(frame) {
+      var path = frame.getAttribute('data-path');
+      var type = frame.getAttribute('data-type');
+      var title = frame.getAttribute('data-title');
+      var category = frame.getAttribute('data-category');
+      mediaWrap.innerHTML = type === 'video'
+        ? '<video src="' + path + '" controls autoplay loop playsinline></video>'
+        : '<img src="' + path + '" alt="' + (title || '') + '">';
+      titleEl.textContent = title || '';
+      catEl.textContent = category || '';
+      return path;
+    }
+
+    function openLightbox(frame) {
+      var path = setMainMedia(frame);
+      var groupKey = frame.getAttribute('data-group');
+      if (!path) return;
+
+      renderRelated(groupKey, path);
+
+      lightbox.classList.add('is-open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      isOpen = true;
+
+      if (reduceMotion) {
+        gsap.set(backdrop, { opacity: 1 });
+        gsap.set(panel, { opacity: 1, scale: 1, y: 0 });
+        return;
+      }
+      gsap.killTweensOf([backdrop, panel]);
+      gsap.set(backdrop, { opacity: 0 });
+      gsap.set(panel, { opacity: 0, scale: 0.86, y: 18 });
+      gsap.to(backdrop, { opacity: 1, duration: 0.45, ease: 'power2.out' });
+      gsap.to(panel, { opacity: 1, scale: 1, y: 0, duration: 0.55, ease: 'back.out(1.5)' });
+    }
+
+    function closeLightbox() {
+      if (!isOpen) return;
+      isOpen = false;
+      document.body.style.overflow = '';
+
+      function finish() {
+        lightbox.classList.remove('is-open');
+        lightbox.setAttribute('aria-hidden', 'true');
+        mediaWrap.innerHTML = '';
+      }
+
+      if (reduceMotion) { finish(); return; }
+      gsap.killTweensOf([backdrop, panel]);
+      gsap.to(panel, { opacity: 0, scale: 0.9, y: 12, duration: 0.35, ease: 'power2.in' });
+      gsap.to(backdrop, { opacity: 0, duration: 0.35, ease: 'power2.in', onComplete: finish });
+    }
+
+    grid.addEventListener('click', function (e) {
+      var item = e.target.closest('.item');
+      if (!item) return;
+      e.preventDefault();
+      var frame = item.querySelector('.item-frame');
+      if (frame) openLightbox(frame);
+    });
+
+    grid.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var item = e.target.closest('.item');
+      if (!item) return;
+      e.preventDefault();
+      var frame = item.querySelector('.item-frame');
+      if (frame) openLightbox(frame);
+    });
+
+    relatedGrid.addEventListener('click', function (e) {
+      var relatedItem = e.target.closest('.related-item');
+      if (!relatedItem) return;
+      var path = setMainMedia(relatedItem);
+      relatedGrid.querySelectorAll('.related-item').forEach(function (item) {
+        item.classList.toggle('is-active', item === relatedItem);
+      });
+      if (path) relatedItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    });
+
+    closeBtn.addEventListener('click', closeLightbox);
+    backdrop.addEventListener('click', closeLightbox);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeLightbox();
+    });
   }
 
   function setupItemTilt() {
@@ -536,7 +763,7 @@ main{display:block}
       b.addEventListener('click', function () { setFilter(b.dataset.filter); });
     });
 
-    setFilter('billboards');
+    setFilter('all');
   }
 
   function setupScrollTransitionSystem() {
@@ -663,6 +890,7 @@ main{display:block}
   renderPortfolio();
   setupToolInteraction();
   setupItemTilt();
+  setupLightbox();
   setupFilterInteraction();
   setupScrollTransitionSystem();
 })();
