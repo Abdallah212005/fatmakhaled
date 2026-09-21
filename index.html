@@ -577,22 +577,23 @@ main{display:block}
     var grid = document.getElementById('portfolioGrid');
     var markup = [];
     portfolioGroups.forEach(function (group) {
-      group.assets.forEach(function (asset, index) {
-        var path = 'portfolio/' + asset.folder + '/' + asset.file;
+      var asset = group.assets[0];
+      var index = 0;
+      var path = 'portfolio/' + asset.folder + '/' + asset.file;
         var encodedPath = encodeURI(path);
         var file = asset.file;
         var isVideo = file.slice(-4) === '.mp4';
         var shape = isVideo ? (asset.category === 'motion-graphic' ? 'reel' : 'wide') : (asset.category === 'social-media' ? 'sq' : (index % 3 === 0 ? 'tall' : index % 3 === 1 ? 'sq' : 'wide'));
         var poster = isVideo && file.indexOf('web-') === 0 ? encodedPath.replace('.mp4', '.jpg') : '';
         var num = String(index + 1).padStart(2, '0');
-        var title = group.label + ' ' + (index + 1);
+        var title = group.label;
         var frameData = 'data-path="' + encodedPath + '" data-type="' + (isVideo ? 'video' : 'image') + '" data-title="' + title + '" data-category="' + group.label + '" data-group="' + group.key + '"';
         var overlay = '<div class="item-overlay"><span class="index">' + num + '</span><span class="view" tabindex="0" role="button">View project<i class="arrow" aria-hidden="true"></i></span></div>';
         var media = isVideo
           ? '<div class="item-frame" ' + frameData + '><div class="media-frame ' + shape + '">' + (poster ? '<img class="motion-poster" src="' + poster + '" alt="' + title + ' preview">' : '') + '<video src="' + encodedPath + '" muted loop autoplay playsinline preload="metadata" aria-label="' + title + '" onerror="this.classList.add(\'failed\')"></video><span class="media-fallback">' + title + '</span>' + overlay + '</div></div>'
           : '<div class="item-frame" ' + frameData + '><div class="img-wrap"><img src="' + encodedPath + '" alt="' + title + '" loading="' + (group.key === 'akarat-expo' ? 'eager' : 'lazy') + '">' + overlay + '</div></div>';
-        markup.push('<article class="item ' + shape + '" data-category="' + asset.category + '" tabindex="0" role="button" aria-label="Open ' + title + '">' + media + '<div class="cap"><h3>' + title + '</h3><span>' + group.label + '</span><a href="#" class="view-project-link">View project <i class="arrow" aria-hidden="true"></i></a></div></article>');
-      });
+        var categories = group.assets.map(function (entry) { return entry.category; }).filter(function (category, categoryIndex, allCategories) { return allCategories.indexOf(category) === categoryIndex; }).join('|');
+        markup.push('<article class="item ' + shape + '" data-category="' + categories + '" tabindex="0" role="button" aria-label="Open ' + title + '">' + media + '<div class="cap"><h3>' + title + '</h3><span>' + group.label + '</span><a href="#" class="view-project-link">View project <i class="arrow" aria-hidden="true"></i></a></div></article>');
     });
     grid.innerHTML = markup.join('');
   }
@@ -745,9 +746,25 @@ main{display:block}
     var fBtns = document.querySelectorAll('.filter');
     var items = document.querySelectorAll('.item');
 
+    function updateProjectCovers(category) {
+      items.forEach(function (item) {
+        var frame = item.querySelector('.item-frame');
+        var group = frame && portfolioGroups.find(function (entry) { return entry.key === frame.dataset.group; });
+        var asset = group && group.assets.find(function (entry) { return entry.category === category; });
+        var image = item.querySelector('.img-wrap img');
+        if (!asset || !image || !frame) return;
+        var path = encodeURI('portfolio/' + asset.folder + '/' + asset.file);
+        image.src = path;
+        image.alt = group.label;
+        frame.setAttribute('data-path', path);
+        frame.setAttribute('data-type', 'image');
+      });
+    }
+
     function setFilter(f) {
+      updateProjectCovers(f);
       items.forEach(function (i) {
-        i.classList.toggle('is-hidden', f !== 'all' && i.dataset.category !== f);
+        i.classList.toggle('is-hidden', f !== 'all' && i.dataset.category.split('|').indexOf(f) === -1);
       });
       fBtns.forEach(function (b) {
         var on = b.dataset.filter === f;
