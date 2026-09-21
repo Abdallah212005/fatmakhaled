@@ -577,7 +577,8 @@ main{display:block}
     var grid = document.getElementById('portfolioGrid');
     var markup = [];
     portfolioGroups.forEach(function (group) {
-      var asset = group.assets[0];
+      var projectAssets = group.assets[0].category === 'social-media' ? group.assets : [group.assets[0]];
+      projectAssets.forEach(function (asset, projectIndex) {
       var index = 0;
       var path = 'portfolio/' + asset.folder + '/' + asset.file;
         var encodedPath = encodeURI(path);
@@ -585,8 +586,8 @@ main{display:block}
         var isVideo = file.slice(-4) === '.mp4';
         var shape = isVideo ? (asset.category === 'motion-graphic' ? 'reel' : 'wide') : (asset.category === 'social-media' ? 'sq' : (index % 3 === 0 ? 'tall' : index % 3 === 1 ? 'sq' : 'wide'));
         var poster = isVideo && file.indexOf('web-') === 0 ? encodedPath.replace('.mp4', '.jpg') : '';
-        var num = String(index + 1).padStart(2, '0');
-        var title = group.label;
+        var num = String(group.assets[0].category === 'social-media' ? projectIndex + 1 : index + 1).padStart(2, '0');
+        var title = group.assets[0].category === 'social-media' ? group.label + ' ' + (projectIndex + 1) : group.label;
         var frameData = 'data-path="' + encodedPath + '" data-type="' + (isVideo ? 'video' : 'image') + '" data-title="' + title + '" data-category="' + group.label + '" data-group="' + group.key + '"';
         var overlay = '<div class="item-overlay"><span class="index">' + num + '</span><span class="view" tabindex="0" role="button">View project<i class="arrow" aria-hidden="true"></i></span></div>';
         var media = isVideo
@@ -594,6 +595,7 @@ main{display:block}
           : '<div class="item-frame" ' + frameData + '><div class="img-wrap"><img src="' + encodedPath + '" alt="' + title + '" loading="' + (group.key === 'akarat-expo' ? 'eager' : 'lazy') + '">' + overlay + '</div></div>';
         var categories = group.assets.map(function (entry) { return entry.category; }).filter(function (category, categoryIndex, allCategories) { return allCategories.indexOf(category) === categoryIndex; }).join('|');
         markup.push('<article class="item ' + shape + '" data-category="' + categories + '" tabindex="0" role="button" aria-label="Open ' + title + '">' + media + '<div class="cap"><h3>' + title + '</h3><span>' + group.label + '</span><a href="#" class="view-project-link">View project <i class="arrow" aria-hidden="true"></i></a></div></article>');
+      });
     });
     grid.innerHTML = markup.join('');
   }
@@ -750,6 +752,7 @@ main{display:block}
       items.forEach(function (item) {
         var frame = item.querySelector('.item-frame');
         var group = frame && portfolioGroups.find(function (entry) { return entry.key === frame.dataset.group; });
+        if (group && group.assets[0].category === 'social-media') return;
         var asset = group && group.assets.find(function (entry) { return entry.category === category; });
         var image = item.querySelector('.img-wrap img');
         if (!asset || !image || !frame) return;
