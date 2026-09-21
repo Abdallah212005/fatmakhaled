@@ -590,7 +590,7 @@ main{display:block}
         var overlay = '<div class="item-overlay"><span class="index">' + num + '</span><span class="view" tabindex="0" role="button">View project<i class="arrow" aria-hidden="true"></i></span></div>';
         var media = isVideo
           ? '<div class="item-frame" ' + frameData + '><div class="media-frame ' + shape + '">' + (poster ? '<img class="motion-poster" src="' + poster + '" alt="' + title + ' preview">' : '') + '<video src="' + encodedPath + '" muted loop autoplay playsinline preload="metadata" aria-label="' + title + '" onerror="this.classList.add(\'failed\')"></video><span class="media-fallback">' + title + '</span>' + overlay + '</div></div>'
-          : '<div class="item-frame" ' + frameData + '><div class="img-wrap"><img src="' + encodedPath + '" alt="' + title + '" loading="eager">' + overlay + '</div></div>';
+          : '<div class="item-frame" ' + frameData + '><div class="img-wrap"><img src="' + encodedPath + '" alt="' + title + '" loading="' + (group.key === 'akarat-expo' ? 'eager' : 'lazy') + '">' + overlay + '</div></div>';
         markup.push('<article class="item ' + shape + '" data-category="' + asset.category + '" tabindex="0" role="button" aria-label="Open ' + title + '">' + media + '<div class="cap"><h3>' + title + '</h3><span>' + group.label + '</span><a href="#" class="view-project-link">View project <i class="arrow" aria-hidden="true"></i></a></div></article>');
       });
     });
